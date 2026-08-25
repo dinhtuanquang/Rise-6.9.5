@@ -21,7 +21,9 @@ public class ShaderUtil implements InstanceAccess {
     public static int createShader(String var0, String var1) {
         String s = getShaderResource(var0);
         String s1 = getShaderResource(var1);
-        if (var0 != null && var1 != null) {
+        // Guard against failed resource loads: test the loaded source, not the filename.
+        // If getShaderResource() returns null, passing null to glShaderSource() crashes.
+        if (s != null && s1 != null) {
             int i = GL20.glCreateShader(35632);
             int j = GL20.glCreateShader(35633);
             GL20.glShaderSource(i, s);

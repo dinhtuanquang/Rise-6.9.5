@@ -86,10 +86,11 @@ This section documents the patches applied to make Rise 6.9.5 work on **Android 
 4. **Java flags** — add the following to your JVM arguments:
    ```
    -Drise.gameDir=<your game directory>
-   -Drise.auth.username=<your username>
+   -Drise.auth.username=<any name you want>
    -Drise.auth.autologin=true
-   -Drise.net.offline=false
+   -Drise.net.offline=true
    ```
+   > This client runs in **offline / cracked mode** — no Mojang account or access token is required. Pick any username.
 5. **Renderer** — select **gl4es** (OpenGL 2.1 compatibility). Other renderers are untested.
 6. Launch and enjoy. Singleplayer and Multiplayer both work.
 

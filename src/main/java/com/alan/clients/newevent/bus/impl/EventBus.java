@@ -116,7 +116,8 @@ Bus<Event> {
             }
             return;
         }
-        catch (Exception exception) {
+        catch (Throwable exception) {
+            exception.printStackTrace();
             return;
         }
     }

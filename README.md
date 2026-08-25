@@ -13,6 +13,27 @@
 
 Join Discord：https://discord.gg/eSFUUp7wW
 
+This Rise 6.9.5 fork is for Android Launchers like PojavLauncher, ZalithLauncher,... which have limitations (GLSL 120, no OpenGL 3.2+,...)
+
+## What changed?
+
+- Added workflow for building when push to **main** branch
+
+- Fixed crash on world load (`NoSuchMethodError`).
+
+- Fixed network IPv4 stack error on Android.
+
+- Fixed GLSL shader compilation failure under gl4es.
+
+## How to install Rise on Android?
+
+1. Download rise-client.jar in github actions tab and Rise.json in releases tab.
+2. Create a folder in .minecraft/versions/ (Example: Rise)
+3. Move the rise-client.jar and Rise.json into .minecraft/versions/Rise/
+4. Make sure renderer is GL4ES and JDK is 21.
+5. Enjoy!
+
+
 ## requirements
 
 - JDK 21 or newer
@@ -62,67 +83,6 @@ all default to off.
 | `-Drise.net.remotescripts=true` | remote script/config download |
 | `-Drise.net.altservice=true` | alt-account service |
 | `-Drise.net.versioncheck=true` | update gate on the login screen |
-
----
-
-## 📱 Android / Mobile (Zalith Launcher · Pojav · gl4es)
-
-This section documents the patches applied to make Rise 6.9.5 work on **Android ARM64** via Zalith Launcher / Pojav core using the `gl4es 1.1.5` OpenGL → GLES translation layer.
-
-### Target environment
-
-| Component | Value |
-|---|---|
-| OS / arch | Android 11, Linux aarch64 |
-| Java | OpenJDK 21 (64-bit aarch64) |
-| Renderer | Qualcomm Adreno 540 via **gl4es 1.1.5** (OpenGL 2.1 compat) |
-| Windowing | LWJGL 3.3.6-snapshot + LWJGLX |
-
-### Installing on Android
-
-1. **Get a launcher** — [Zalith Launcher](https://github.com/ZalithLauncher/ZalithLauncher) or any Pojav-based fork.
-2. **Download `rise-client.jar`** from the [Releases](../../releases) page (built by CI) or build it yourself (`./gradlew clientJar`).
-3. **Add a new version** in the launcher. Choose **"Custom JAR"** and point it at `rise-client.jar`.
-4. **Java flags** — add the following to your JVM arguments:
-   ```
-   -Drise.gameDir=<your game directory>
-   -Drise.auth.username=<any name you want>
-   -Drise.auth.autologin=true
-   -Drise.net.offline=true
-   ```
-   > This client runs in **offline / cracked mode** — no Mojang account or access token is required. Pick any username.
-5. **Renderer** — select **gl4es** (OpenGL 2.1 compatibility). Other renderers are untested.
-6. Launch and enjoy. Singleplayer and Multiplayer both work.
-
-### Patches applied (vs. original Rise 6.9.5)
-
-#### 🐛 Fix — Singleplayer crash on world load (`NoSuchMethodError`)
-
-**Root cause:** `ChannelConsoleSpammer` called `RandomStringUtils.randomAlphabetic(int, int)` which requires Commons Lang3 ≥ 3.5. Minecraft 1.8.9 bundles 3.3.2, so every game tick threw `NoSuchMethodError` and crashed the game loop.
-
-**Fix:** Replaced with the 3.3.2-compatible single-argument overload. Also hardened the EventBus dispatch loop to catch `Throwable` (not just `Exception`) so no future listener error can kill the game.
-
-#### 🐛 Fix — Multiplayer connection failure on ARM64
-
-**Root cause (1):** The client bundles a `librise_native.so` compiled for x86-64. On aarch64 it always fails to load with `UnsatisfiedLinkError`. This left all `NativeBridge` security methods returning `null`/`false`, causing security checks to misfire and potentially block connection flows.
-
-**Root cause (2):** `SecurityFeatureManager` unconditionally enabled its checks (`nH() → true`), but those checks internally call `NativeBridge` methods that are non-functional without the native library. Running dead-stub security code produced incorrect results.
-
-**Fix:** Detect ARM64 at startup and skip native library loading. Gate all security checks behind `NativeDecryptor.isLoaded()` so they're fully disabled in pure-Java mode (correct behaviour on mobile).
-
-#### 🎨 Fix — GLSL shader compilation failure under gl4es
-
-**Root cause:** Two shaders (`downsample.frag`, `upsample.frag`) declared `#version 330 core` but gl4es only supports up to OpenGL 2.1 / GLSL 1.20. They also used `out vec4 fragColor` (core profile output) and `gl_FragCoord` in ways that conflict with gl4es's compatibility layer.
-
-**Fix:** Downgraded both shaders to `#version 120`. Replaced `out vec4 fragColor` with built-in `gl_FragColor`. Replaced `gl_FragCoord.xy / screenResolution` with `gl_TexCoord[0].st` (equivalent when rendered via the existing full-screen quad). Changed `uniform int mixture` → `uniform float mixture` to avoid GLSL 120 integer/float conversion edge cases in gl4es.
-
-Additionally fixed `ShaderUtil.createShader()` to null-check the *loaded GLSL source* (not the filename parameter), preventing a crash when any shader resource fails to load.
-
-#### ℹ️ Note — `GL_ARB_occlusion_query` (Adreno 540)
-
-No custom-code occlusion query calls were found in the client source. The vanilla Minecraft rendering path (inside `minecraft-deobf.jar`) uses them, but gl4es stubs these calls to always return "visible". Chunks will always be considered visible — minor overdraw overhead, no crashes.
-
----
 
 ## join us
 

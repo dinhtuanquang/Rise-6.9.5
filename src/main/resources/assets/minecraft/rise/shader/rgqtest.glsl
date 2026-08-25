@@ -8,9 +8,11 @@ uniform float u_time;
 uniform int u_direction;
 uniform vec4 u_edges;
 
+varying vec2 v_texCoord;
+
 void main() {
-    vec2 tex_coord = gl_TexCoord[0].st;
-    float newTexCoord = u_direction > 0.0 ? tex_coord.y : tex_coord.x;
+    vec2 tex_coord = v_texCoord;
+    float newTexCoord = u_direction > 0 ? tex_coord.y : tex_coord.x;
 
     vec4 color = mix(u_first_color, u_second_color, 0.5 + 0.5 * sin(3.0 * (newTexCoord + u_time)));
 

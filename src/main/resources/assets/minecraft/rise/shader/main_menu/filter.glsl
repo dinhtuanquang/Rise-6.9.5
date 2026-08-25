@@ -42,10 +42,12 @@ vec3 ca(sampler2D t, vec2 UV, vec4 sampl){
 	return c;
 }
 
+varying vec2 v_texCoord;
+
 void main()
 {
     const float brightness = 1.0;
-    vec2 pp = gl_TexCoord[0].st;
+    vec2 pp = v_texCoord;
     vec2 p = 1.-2.*pp;
     p.y *= u_texelSize.x/u_texelSize.y;
     vec4 sampl = texture2D(u_texture, pp);

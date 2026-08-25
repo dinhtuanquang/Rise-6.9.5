@@ -3,9 +3,11 @@
 uniform sampler2D u_diffuse_sampler;
 uniform float u_alpha;
 
+varying vec2 v_texCoord;
+
 void main(void)
 {
-    vec2 tex_coord = gl_TexCoord[0].st;
+    vec2 tex_coord = v_texCoord;
     vec4 pixel_color = texture2D(u_diffuse_sampler, tex_coord);
     if (pixel_color.a == 0.0) discard;
 

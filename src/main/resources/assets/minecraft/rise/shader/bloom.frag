@@ -4,9 +4,11 @@ uniform sampler2D u_diffuse_sampler, u_other_sampler;
 uniform vec2 u_texel_size, u_direction;
 uniform float u_radius, u_kernel[24];
 
+varying vec2 v_texCoord;
+
 void main(void)
 {
-    vec2 uv = gl_TexCoord[0].st;
+    vec2 uv = v_texCoord;
 
     if (u_direction.x == 0.0) {
 
@@ -21,7 +23,7 @@ void main(void)
 
     pixel_color.rgb *= pixel_color.a;
 
-    for (int f = 0; f <= u_radius; f++)
+    for (float f = 0.0; f <= u_radius; f++)
     {
         // calculate offset
         vec2 offset = (u_texel_size * u_direction) * f;
@@ -35,7 +37,7 @@ void main(void)
         right.rgb *= right.a;
 
         // linearly interpolate between the two samples
-        pixel_color = pixel_color + (left + right) * u_kernel[f];
+        pixel_color = pixel_color + (left + right) * u_kernel[int(f)];
     }
 
     pixel_color.rgb /= pixel_color.a;

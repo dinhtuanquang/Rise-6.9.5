@@ -4,10 +4,12 @@ uniform sampler2D u_texture;
 uniform vec2 u_texel_size;
 uniform float u_radius;
 
+varying vec2 v_texCoord;
+
 void main(void)
 {
     vec4 i_color, p_color;
-    vec2 tex_coord = gl_TexCoord[0].st;
+    vec2 tex_coord = v_texCoord;
     p_color = texture2D(u_texture, tex_coord);
 
     if (p_color.a > 0.0) {

@@ -5,9 +5,11 @@ uniform float u_radius;
 uniform vec4 u_color;
 uniform vec4 u_edges;
 
+varying vec2 v_texCoord;
+
 void main(void)
 {
-    vec2 tex_coord = gl_TexCoord[0].st;
+    vec2 tex_coord = v_texCoord;
 
     // fast implementation of custom corners
     // can probably be better, but this is good enough for now

@@ -5,8 +5,11 @@ precision mediump float;
 
 #extension GL_OES_standard_derivatives : enable
 
+uniform sampler2D u_diffuse_sampler;
+varying vec2 v_texCoord;
+
 void main() {
-    vec2 tex_coord = gl_TexCoord[0].st;
+    vec2 tex_coord = v_texCoord;
     vec4 pixel_color = texture2D(u_diffuse_sampler, tex_coord);
     if (pixel_color.a == 0.0) discard;
 

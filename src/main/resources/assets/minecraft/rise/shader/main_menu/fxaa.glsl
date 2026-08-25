@@ -3,9 +3,11 @@
 uniform sampler2D u_texture;
 uniform vec2 u_texelSize;
 
+varying vec2 v_texCoord;
+
 void main()
 {
-    vec2 p = gl_TexCoord[0].xy;
+    vec2 p = v_texCoord;
     vec2 pp = 0.5 / u_texelSize;
     vec4 color = texture2D(u_texture, p / 2.0);
     vec3 luma = vec3(0.299, 0.587, 0.114);

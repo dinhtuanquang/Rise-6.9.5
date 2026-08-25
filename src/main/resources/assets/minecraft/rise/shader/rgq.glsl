@@ -7,10 +7,12 @@ uniform vec4 u_second_color;
 uniform vec4 u_edges;
 uniform int u_direction;
 
+varying vec2 v_texCoord;
+
 void main(void)
 {
-    vec2 tex_coord = gl_TexCoord[0].st;
-    vec4 color = mix(u_first_color, u_second_color, u_direction > 0.0 ? tex_coord.y : tex_coord.x);
+    vec2 tex_coord = v_texCoord;
+    vec4 color = mix(u_first_color, u_second_color, u_direction > 0 ? tex_coord.y : tex_coord.x);
 
     // fast implementation of custom corners
     // can probably be better, but this is good enough for now

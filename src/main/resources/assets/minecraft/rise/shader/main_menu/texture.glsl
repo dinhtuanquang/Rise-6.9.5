@@ -158,9 +158,11 @@ vec3 shade(vec3 p, vec3 v){
     return vec3(final*0.5);
 }
 
+varying vec2 v_texCoord;
+
 void main()
 {
-    vec2 uv = gl_TexCoord[0].st;
+    vec2 uv = v_texCoord;
     vec3 a = vec3(0);
 
     float lerp = 0.5+0.5*cos(5.1*0.4-pi);

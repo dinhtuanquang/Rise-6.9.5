@@ -282,6 +282,7 @@ public enum Client
     }
 
     static {
+        System.setProperty("java.net.preferIPv4Stack", "true");
         new StringBuilder().append("Made with <3 by Alan and ").append("The_Bi11iona1re").toString();
         new StringBuilder().append("\u00a9 Rise Client 2026. All Righ").append("ts Reserved").toString();
         final String s = "6.9.5";

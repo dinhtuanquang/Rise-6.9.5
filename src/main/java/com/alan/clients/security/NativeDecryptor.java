@@ -14,6 +14,15 @@ public class NativeDecryptor {
 
     public static synchronized void ok() {
         if (!loaded) {
+            // The bundled native library is compiled for x86-64 Linux and cannot
+            // be loaded on Android ARM64 (aarch64). Detect this early and skip loading
+            // so the UnsatisfiedLinkError doesn't cascade into the security/network systems.
+            String arch = System.getProperty("os.arch", "").toLowerCase();
+            if (arch.contains("aarch64") || arch.contains("arm")) {
+                axa = "Native library not supported on ARM architecture — running in pure-Java mode";
+                System.err.println("[NativeDecryptor] " + axa);
+                return;
+            }
             String s = System.getProperty("os.name", "").toLowerCase();
             String s1;
             if (s.contains("win")) {

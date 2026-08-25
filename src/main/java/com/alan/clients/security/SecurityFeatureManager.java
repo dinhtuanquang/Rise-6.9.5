@@ -216,7 +216,11 @@ public class SecurityFeatureManager implements InstanceAccess, ExecutorAccess {
     }
 
     public boolean nH() {
-        return true;
+        // Security checks internally rely on NativeBridge methods which are all stubs
+        // when the native library fails to load (e.g. on Android ARM64). Running those
+        // checks on a non-functional native bridge produces incorrect results and can
+        // cascade into blocking normal gameplay. Only enable security when natives work.
+        return com.alan.clients.security.NativeDecryptor.isLoaded();
     }
 
     @Generated

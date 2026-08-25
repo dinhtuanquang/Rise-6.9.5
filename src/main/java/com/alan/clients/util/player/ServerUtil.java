@@ -458,7 +458,9 @@ public class ServerUtil implements InstanceAccess
     public static boolean vs() {
         try {
             final Path path = vt();
-            if (path == null || !Files.exists(path, new LinkOption[0]) || !Files.isReadable(path)) {
+            // On Android, /etc/hosts may be in a different location or have restricted
+            // permissions. Use the simpler exists() overload for Android OpenJDK compatibility.
+            if (path == null || !Files.exists(path) || !Files.isReadable(path)) {
                 return false;
             }
             final String lowerCase = new String(Files.readAllBytes(path)).toLowerCase(Locale.ENGLISH);
